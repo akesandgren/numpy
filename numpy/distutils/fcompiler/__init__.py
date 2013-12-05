@@ -35,7 +35,7 @@ from distutils.errors import DistutilsModuleError, \
      DistutilsExecError, CompileError, LinkError, DistutilsPlatformError
 from distutils.util import split_quoted, strtobool
 
-from numpy.distutils.ccompiler import CCompiler, gen_lib_options
+from numpy.distutils.unixccompiler import UnixCCompiler, gen_lib_options
 from numpy.distutils import log
 from numpy.distutils.misc_util import is_string, all_strings, is_sequence, \
     make_temp_file, get_shared_lib_extension
@@ -62,7 +62,7 @@ def str2bool(s):
 def is_sequence_of_strings(seq):
     return is_sequence(seq) and all_strings(seq)
 
-class FCompiler(CCompiler):
+class FCompiler(UnixCCompiler):
     """Abstract base class to define the interface that must be implemented
     by real Fortran compiler classes.
 
@@ -220,7 +220,7 @@ class FCompiler(CCompiler):
     extra_f90_compile_args = []
 
     def __init__(self, *args, **kw):
-        CCompiler.__init__(self, *args, **kw)
+        UnixCCompiler.__init__(self, *args, **kw)
         self.distutils_vars = self.distutils_vars.clone(self._environment_hook)
         self.command_vars = self.command_vars.clone(self._environment_hook)
         self.flag_vars = self.flag_vars.clone(self._environment_hook)
@@ -429,7 +429,7 @@ class FCompiler(CCompiler):
 
     def get_version(self, force=False, ok_status=[0]):
         assert self._is_customised
-        version = CCompiler.get_version(self, force=force, ok_status=ok_status)
+        version = UnixCCompiler.get_version(self, force=force, ok_status=ok_status)
         if version is None:
             raise CompilerNotFound()
         return version
@@ -666,7 +666,7 @@ class FCompiler(CCompiler):
             if extra_postargs:
                 ld_args.extend(extra_postargs)
             self.mkpath(os.path.dirname(output_filename))
-            if target_desc == CCompiler.EXECUTABLE:
+            if target_desc == UnixCCompiler.EXECUTABLE:
                 linker = self.linker_exe[:]
             else:
                 linker = self.linker_so[:]
