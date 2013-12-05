@@ -12,6 +12,7 @@ classes are available:
   lapack_atlas_info
   blas_info
   lapack_info
+  acml_info
   openblas_info
   blas_opt_info       # usage recommended
   lapack_opt_info     # usage recommended
@@ -300,6 +301,7 @@ def get_info(name, notfound_action=0):
           'lapack_atlas': lapack_atlas_info,  # use lapack_opt instead
           'lapack_atlas_threads': lapack_atlas_threads_info,  # ditto
           'mkl': mkl_info,
+          'acml': acml_info,
           'openblas': openblas_info,          # use blas_opt instead
           'lapack_mkl': lapack_mkl_info,      # use lapack_opt instead
           'blas_mkl': blas_mkl_info,          # use blas_opt instead
@@ -1369,6 +1371,11 @@ class lapack_opt_info(system_info):
 
     def calc_info(self):
 
+        acml_info = get_info('acml')
+        if acml_info:
+            self.set_info(**acml_info)
+            return
+
         openblas_info = get_info('openblas')
         if openblas_info:
             self.set_info(**openblas_info)
@@ -1471,6 +1478,11 @@ class blas_opt_info(system_info):
             self.set_info(**blas_mkl_info)
             return
 
+        acml_info = get_info('acml')
+        if acml_info:
+            self.set_info(**acml_info)
+            return
+
         openblas_info = get_info('openblas')
         if openblas_info:
             self.set_info(**openblas_info)
@@ -1550,6 +1562,23 @@ class blas_info(system_info):
 
         blas_libs = self.get_libs('blas_libs', self._lib_names)
         info = self.check_libs(lib_dirs, blas_libs, [])
+        if info is None:
+            return
+        info['language'] = 'f77'  # XXX: is it generally true?
+        self.set_info(**info)
+
+
+class acml_info(blas_info):
+    section = 'acml'
+    dir_env_var = 'ACML'
+    _lib_names = ['acml']
+    notfounderror = BlasNotFoundError
+
+    def calc_info(self):
+        lib_dirs = self.get_lib_dirs()
+
+        acml_libs = self.get_libs('acml_libs', self._lib_names)
+        info = self.check_libs(lib_dirs, acml_libs, [])
         if info is None:
             return
         info['language'] = 'f77'  # XXX: is it generally true?

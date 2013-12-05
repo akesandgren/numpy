@@ -75,6 +75,19 @@
 # library_dirs = /opt/atlas/lib
 # include_dirs = /opt/atlas/include
 
+# ACML
+# --------
+# ACML is another open source optimized implementation of BLAS and Lapack
+# and can be seen as an alternative to Atlas. To build numpy against ACML
+# instead of Atlas, use this section instead of the above, adjusting as needed
+# for your configuration (in the following example we installed ACML with
+# ``make install PREFIX=/opt/ACML``.
+#
+# [acml]
+# libraries = acml
+# library_dirs = /opt/ACML/lib
+# include_dirs = /opt/ACML/include
+
 # OpenBLAS
 # --------
 # OpenBLAS is another open source optimized implementation of BLAS and Lapack
